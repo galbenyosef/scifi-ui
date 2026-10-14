@@ -1,4 +1,4 @@
-# AGENTS.md, version 25
+# AGENTS.md, version 26
 
 Durable working knowledge for any agent contributing to **scifi-ui**. Read this
 before writing a line. It exists because the same lessons were being relearned
@@ -1028,3 +1028,22 @@ time through seven kinds. Lessons worth keeping:
   cell once and holds it, with a button to grow them again, which is why
   `once` and `regrow()` exist. Options added for a demo are still
   deviations: write them in the header.
+
+**Version 26**, 14 October 2026. The seal, `components/seal.*`, from
+ng-extend's `FeedbackModal.vue`: the check on the "Signal received" screen.
+Lessons worth keeping:
+
+- **An ending that keeps breathing.** The check lands once and stays, but
+  the two outer rings keep turning in opposite directions, at 24s and 5s.
+  A success state that freezes reads as a picture; one with slow motion
+  around a fixed result reads as an instrument holding that result.
+- **A celebration means more for being used in one place.** EyeWire II put
+  the seal on the reply to a report as well, and Ames took it off the reply
+  the next day so the check stays the sign that a report arrived. Before
+  reusing a success flourish, ask whether sharing it dilutes what it said.
+- **`pathLength="100"` makes a self drawing stroke size free.** With it the
+  dash that hides the stroke is always exactly one stroke long, so the ring
+  and the check draw the same way at any size with no measuring.
+- **Replay by replacement.** The seal is many separate animations on SVG
+  children; restarting them in place is the unreliable path of version 7.
+  A fresh clone in the same spot starts every one from its first frame.

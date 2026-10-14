@@ -771,6 +771,28 @@ element. `stop()`, `regrow()`, `kinds` (cycle through only these) and `once`
 (grow one, hold, stop) are new, the last two so the demo can show all seven
 without seven loops running. The drawing is unchanged.
 
+### 18. The seal (`components/seal.*`)
+
+The check on EyeWire II's "Signal received" screen, shown when a bug report
+reaches the team. Ported from `src/components/FeedbackModal.vue`
+(`.nge-fb-seal`) on the eyewire-ii-community branch of ng-extend. Pure CSS;
+`seal.js` only builds the markup: `holoSeal(host, { size })` appends one and
+returns it, `holoSeal.replay(seal)` swaps in a fresh copy and returns that.
+
+On a 96 by 96 field: a ring of 30 ticks (r 44) rises at 0.5s and turns once
+every 24s; a broken arc (r 37, dashes 46 28 12 147) rises at 0.6s and turns
+the other way every 5s; the green ring (r 29) draws itself closed from twelve
+o'clock at 0.7s over 0.55s; the check draws itself at 1.1s over 0.4s; a green
+ripple leaves the ring at 1.25s and a cyan one at 1.45s, each growing 2.7
+times as it fades. Words beside it should rise at 1.2s, after the check.
+
+`--holoseal-size` (default 96px) scales all of it. Reduced motion shows the
+finished seal at once, with nothing turning and no ripples.
+
+Deviations: the source's `margin: 2px 0 4px` is left to the caller, the
+ripple inset is written as a fraction of the size so it scales, and the
+builder and replay are new. The drawing and every timing are unchanged.
+
 ## Tokens
 
 Set these on `:root` in `hologram.css`. Space separated RGB so they compose with

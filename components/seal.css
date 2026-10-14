@@ -1,0 +1,79 @@
+/* ---- the seal (.holoseal) ---------------------------------------------------
+   The check that says something arrived, from EyeWire II's "Signal received"
+   screen, the moment after a bug report reaches the team (ng-extend,
+   src/components/FeedbackModal.vue: .nge-fb-seal). Every number as shipped.
+
+     <div class="holoseal" aria-hidden="true">
+       <svg viewBox="0 0 96 96">
+         <circle class="holoseal-ticks" cx="48" cy="48" r="44"/>
+         <circle class="holoseal-arc" cx="48" cy="48" r="37"/>
+         <circle class="holoseal-ring" cx="48" cy="48" r="29" pathLength="100"/>
+         <path class="holoseal-check" pathLength="100" d="M34 49.5 44 59 63 38.5"/>
+       </svg>
+       <span class="holoseal-wave"></span>
+       <span class="holoseal-wave holoseal-wave--2"></span>
+     </div>
+
+   Four layers and two ripples, in this order:
+     0.5s   a ring of 30 ticks rises and turns, once every 24s, forever
+     0.6s   a broken arc rises inside it and turns the other way, every 5s
+     0.7s   the green ring draws itself closed from twelve o'clock, 0.55s
+     1.1s   the check draws itself, 0.4s, fast at the start
+     1.25s  a green ripple leaves the ring, then a cyan one at 1.45s
+
+   The two turning rings are what keep it alive after the check lands, so it
+   reads as an instrument holding a result rather than a picture of one.
+   Both `pathLength="100"` attributes are load bearing: they make the dash
+   that hides each stroke exactly one stroke long at any size.
+
+   It plays when it is inserted. To play it again, insert a fresh copy
+   (holoSeal.replay in seal.js does that): restarting a CSS animation in
+   place is unreliable, see AGENTS.md version 7.
+
+   Deviation: the source has `margin: 2px 0 4px` for its place in the report
+   box; here layout belongs to the caller. Size it with --holoseal-size. */
+.holoseal {
+  position: relative;
+  width: var(--holoseal-size, 96px);
+  height: var(--holoseal-size, 96px);
+}
+.holoseal svg { width: 100%; height: 100%; overflow: visible; }
+.holoseal-ticks {
+  fill: none; stroke: rgba(126, 224, 255, 0.5); stroke-width: 4; stroke-dasharray: 1 8.87;
+  transform-origin: 48px 48px; animation: holoseal-spin 24s linear infinite, holoseal-rise 0.4s ease-out 0.5s both;
+}
+.holoseal-arc {
+  fill: none; stroke: rgba(52, 230, 168, 0.75); stroke-width: 1.5; stroke-linecap: round; stroke-dasharray: 46 28 12 147;
+  transform-origin: 48px 48px; animation: holoseal-spin 5s linear infinite reverse, holoseal-rise 0.4s ease-out 0.6s both;
+}
+.holoseal-ring {
+  fill: rgba(0, 220, 120, 0.1); stroke: #34e6a8; stroke-width: 2; stroke-linecap: round;
+  stroke-dasharray: 100; stroke-dashoffset: 100; transform-origin: 48px 48px; transform: rotate(-90deg);
+  filter: drop-shadow(0 0 6px rgba(52, 230, 168, 0.7));
+  animation: holoseal-light 0.55s ease-out 0.7s forwards;
+}
+.holoseal-check {
+  fill: none; stroke: #c8ffe9; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 100; stroke-dashoffset: 100;
+  filter: drop-shadow(0 0 6px rgba(52, 230, 168, 0.95));
+  animation: holoseal-light 0.4s cubic-bezier(.5, 0, .2, 1) 1.1s forwards;
+}
+/* The ripples start on the green ring: inset 19px of 96 is a radius of 29,
+   the ring's own. Scaled to 96px the inset scales with it. */
+.holoseal-wave {
+  position: absolute; inset: calc(var(--holoseal-size, 96px) * 19 / 96); border-radius: 50%;
+  border: 1.5px solid rgba(52, 230, 168, 0.8);
+  opacity: 0; animation: holoseal-wave 1.2s ease-out 1.25s forwards;
+}
+.holoseal-wave--2 { animation-delay: 1.45s; border-color: rgba(126, 224, 255, 0.6); }
+
+@keyframes holoseal-spin { to { rotate: 360deg; } }
+@keyframes holoseal-light { to { stroke-dashoffset: 0; } }
+@keyframes holoseal-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes holoseal-wave { 0% { opacity: 0.9; transform: scale(1); } 100% { opacity: 0; transform: scale(2.7); } }
+
+/* Reduced motion: the finished seal at once, nothing turning, no ripples. */
+@media (prefers-reduced-motion: reduce) {
+  .holoseal * { animation-duration: 0.01s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; }
+  .holoseal-wave { display: none; }
+}

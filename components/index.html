@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="path-search.css">
 <link rel="stylesheet" href="growing-neuron.css">
 <link rel="stylesheet" href="growing-cell.css">
+<link rel="stylesheet" href="seal.css">
 
 <style>
   /* Page chrome only. Nothing here is part of any component: the five
@@ -180,6 +181,16 @@
   .celldemo-wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 12px; max-width: 760px; }
   .celldemo-wall .holocell { padding: 12px 8px 10px; border-radius: 10px; box-sizing: border-box; width: 100%;
     background: rgba(2, 8, 18, 0.95); border: 1px solid rgba(74, 150, 224, 0.22); }
+
+  /* seal demo: a stand-in for the "Signal received" box the seal lives in */
+  .sealdemo-box { width: 400px; max-width: 100%; box-sizing: border-box; padding: 20px 20px 18px; border-radius: 12px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px; min-height: 240px;
+    background: rgba(6, 10, 20, 0.95); border: 1px solid rgba(74, 150, 224, 0.36);
+    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.55), 0 0 18px rgba(74, 150, 224, 0.1); }
+  .sealdemo-kicker { font: 700 11px 'Consolas', 'Monaco', monospace; letter-spacing: 0.22em; text-transform: uppercase;
+    color: #34e6a8; animation: holoseal-rise 0.4s ease-out 1.2s both; }
+  .sealdemo-text { font: 700 15px system-ui, sans-serif; color: #f0f6ff; animation: holoseal-rise 0.4s ease-out 1.3s both; }
+  .sealdemo-sizes { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
 
   /* growing neuron demo: a stand-in for the report box the cell lives in */
   .growdemo-box { width: 400px; max-width: 100%; box-sizing: border-box; padding: 22px 20px 18px; border-radius: 12px;
@@ -771,6 +782,49 @@
     </p>
   </section>
 
+  <section id="demo-seal">
+    <p class="eyebrow">Twelve</p>
+    <h2>The seal</h2>
+    <p class="note">
+      The check EyeWire II shows when a bug report reaches the team. A ring
+      of ticks and a broken arc rise and start to turn in opposite
+      directions, a green ring draws itself closed, the check draws itself
+      inside it, and two ripples leave the ring. The words wait for the
+      check. The rings keep turning after it lands, slowly, so the box reads
+      as an instrument holding a result.
+    </p>
+    <p class="row">
+      <button class="demo-btn demo-btn--hero" id="seal-again" type="button">Send it again</button>
+    </p>
+    <div class="sealdemo-box" id="seal-box" aria-live="polite">
+      <div class="holoseal" id="seal-main" aria-hidden="true">
+        <svg viewBox="0 0 96 96">
+          <circle class="holoseal-ticks" cx="48" cy="48" r="44"/>
+          <circle class="holoseal-arc" cx="48" cy="48" r="37"/>
+          <circle class="holoseal-ring" cx="48" cy="48" r="29" pathLength="100"/>
+          <path class="holoseal-check" pathLength="100" d="M34 49.5 44 59 63 38.5"/>
+        </svg>
+        <span class="holoseal-wave"></span>
+        <span class="holoseal-wave holoseal-wave--2"></span>
+      </div>
+      <div class="sealdemo-kicker">Signal received</div>
+      <div class="sealdemo-text">Thank you! Your report reached the team.</div>
+    </div>
+    <p class="note">
+      <b>Sizes.</b> <code>--holoseal-size</code> scales every part together,
+      the ripples included. These are built by <code>holoSeal(host, { size })</code>.
+    </p>
+    <div class="sealdemo-sizes" id="seal-sizes"></div>
+    <p class="note">
+      <b>One place only.</b> In EyeWire II the seal belongs to the bug report.
+      The reply to a report first used it too and then dropped it, so the
+      check stays the sign that a report arrived. Ported from
+      <code>FeedbackModal.vue</code> on the eyewire-ii-community branch of
+      ng-extend, every number as shipped. With reduced motion on, the
+      finished seal appears at once and nothing turns.
+    </p>
+  </section>
+
   <footer>
     <p class="credit">Created by Amy Sterling
       <a href="https://x.com/amyneurons" rel="me noopener">@amyneurons</a></p>
@@ -1167,6 +1221,21 @@
       return holoGrowingCell(cv, { kinds: [kind], once: true, label: name });
     });
     again.addEventListener('click', function () { cells.forEach(function (c) { c.regrow(); }); });
+  })();
+</script>
+<script src="seal.js"></script>
+<script>
+  /* Demo wiring for the seal: replay swaps in a fresh copy of the box, so
+     the seal and the words that wait for it start over together. */
+  (function () {
+    var again = document.getElementById('seal-again');
+    var sizes = document.getElementById('seal-sizes');
+    if (!again || !window.holoSeal) return;
+    var made = [48, 78, 128].map(function (px) { return holoSeal(sizes, { size: px }); });
+    again.addEventListener('click', function () {
+      holoSeal.replay(document.getElementById('seal-box'));
+      made = made.map(holoSeal.replay);
+    });
   })();
 </script>
 </body>
